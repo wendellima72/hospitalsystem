@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversa | Atendimento</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat_conversa.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="cont">
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+    <div class="right-icons">
+      <div class="hamburger" id="hamburger">☰</div>
+      <div class="login">
+        <a href="/"><img src="{{ url_for('static', filename='img/login.png') }}" alt="Sair"></a>
+      </div>
+    </div>
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div style="max-width: 800px; margin: 80px auto 40px;">
+
+
+    <div style="margin-bottom: 25px;">
+    <a href="/chat_cliente" style="background: #2c3e50; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold; font-size: 16px; transition: background 0.3s, transform 0.2s;"
+       onmouseover="this.style.background='#1a252f'; this.style.transform='scale(1.02)';"
+       onmouseout="this.style.background='#2c3e50'; this.style.transform='scale(1)';">
+        <i class="fas fa-arrow-left" style="margin-right: 10px;"></i> Voltar
+    </a>
+    </div>  
+    
+    <div class="chat-window">
+        <div class="chat-header">
+            <h3><i class="fa-solid fa-headset"></i> Atendimento</h3>
+            <p>Status: <span id="statusTicket">Aguardando</span></p>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            {% for msg in mensagens %}
+            <div class="message {{ msg[0] }}">
+                <div class="message-content">
+                    {{ msg[1] }}
+                    <span class="message-time">{{ msg[2] }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="mensagem" placeholder="Digite sua mensagem..." onkeypress="if(event.key==='Enter') enviarMensagem()">
+            <button onclick="enviarMensagem()">Enviar</button>
+        </div>
+
+        <div class="feedback-area">
+            <button onclick="fecharTicket()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                Finalizar atendimento
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="modalFeedback" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; max-width:400px; margin:100px auto; padding:30px; border-radius:15px;">
+        <h3>Avalie nosso atendimento</h3>
+        <div class="stars" id="stars">
+            <i class="fa-regular fa-star" data-value="1"></i>
+            <i class="fa-regular fa-star" data-value="2"></i>
+            <i class="fa-regular fa-star" data-value="3"></i>
+            <i class="fa-regular fa-star" data-value="4"></i>
+            <i class="fa-regular fa-star" data-value="5"></i>
+        </div>
+        <textarea id="comentario" placeholder="Deixe um comentário..." rows="3" style="width:100%; margin:15px 0; padding:10px;"></textarea>
+        <button onclick="enviarFeedback()" style="background:#2c3e50; color:white; padding:12px; border:none; border-radius:5px; cursor:pointer; width:100%;">Enviar avaliação</button>
+    </div>
+</div>
+
+<!-- DADOS DO SERVIDOR (USANDO data-attributes) -->
+<div id="serverData" 
+     data-ticket-id="{{ ticket[0] if ticket else 0 }}" 
+     data-mensagens-length="{{ mensagens|length }}"
+     style="display: none;">
+</div>
+
+<script>
+// Declarar variáveis GLOBAIS
+var ultimaMsg = 0;
+var ticketId = 0;
+var estrelaSelecionada = 0;
+
+// Pegar dados do servidor
+var serverData = document.getElementById('serverData');
+ticketId = parseInt(serverData.getAttribute('data-ticket-id'));
+ultimaMsg = parseInt(serverData.getAttribute('data-mensagens-length'));
+
+function carregarMensagens() {
+    if(ticketId === 0) return;
+    fetch('/buscar_mensagens/' + ticketId)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        var container = document.getElementById('chatMessages');
+        if(data.length > ultimaMsg) {
+            container.innerHTML = '';
+            for(var i = 0; i < data.length; i++) {
+                var msg = data[i];
+                container.innerHTML += `
+                    <div class="message ${msg.remetente}">
+                        <div class="message-content">
+                            ${msg.mensagem}
+                            <span class="message-time">${msg.data_envio}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            ultimaMsg = data.length;
+            container.scrollTop = container.scrollHeight;
+        }
+    });
+}
+
+function enviarMensagem() {
+    var msg = document.getElementById('mensagem').value;
+    if(!msg.trim() || ticketId === 0) return;
+    
+    fetch('/enviar_mensagem_cliente', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'ticket_id=' + ticketId + '&mensagem=' + encodeURIComponent(msg)
+    })
+    .then(function() {
+        document.getElementById('mensagem').value = '';
+        carregarMensagens();
+    });
+}
+
+function fecharTicket() {
+    document.getElementById('modalFeedback').style.display = 'block';
+}
+
+function enviarFeedback() {
+    var comentario = document.getElementById('comentario').value;
+    fetch('/fechar_ticket_cliente/' + ticketId, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'estrelas=' + estrelaSelecionada + '&comentario=' + encodeURIComponent(comentario)
+    })
+    .then(function() {
+        window.location.href = '/chat_cliente';
+    });
+}
+
+// Estrelas
+var stars = document.querySelectorAll('#stars i');
+for(var i = 0; i < stars.length; i++) {
+    stars[i].addEventListener('click', function() {
+        estrelaSelecionada = parseInt(this.dataset.value);
+        for(var j = 0; j < stars.length; j++) {
+            stars[j].className = 'fa-regular fa-star';
+        }
+        for(var j = 0; j < estrelaSelecionada; j++) {
+            stars[j].className = 'fa-solid fa-star';
+        }
+    });
+}
+
+// Hamburguer
+var hamburger = document.getElementById("hamburger");
+var menu = document.getElementById("menu");
+if(hamburger) {
+    hamburger.addEventListener("click", function() {
+        menu.classList.toggle("active");
+    });
+}
+
+// Iniciar
+setInterval(carregarMensagens, 3000);
+carregarMensagens();
+</script>
+
+</body>
+</html>

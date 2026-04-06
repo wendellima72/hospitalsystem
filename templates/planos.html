@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adquira Nossos Planos | Centro Médico Saúde & Vida</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/planos.css') }}">
+
+</head>
+<body>
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Médica" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <!-- AGRUPA AQUI -->
+    <div class="right-icons">
+      <!-- BOTÃO HAMBURGUER -->
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+
+      <!-- BOTÃO SAIR -->
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}" alt="Sair">
+        </a>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+
+<section class="planos">
+  <h2>CONFIRA OS NOSSOS PLANOS DISPONÍVEIS</h2>
+
+  <div class="planos-container">
+
+    <div class="plano">
+      <h3>Plano Básico - VidaEssencial</h3>
+      <p>Plano voltado para atendimentos essenciais de saúde, oferecendo consultas médicas em clínicas gerais, exames laboratoriais simples e atendimento de urgência.</p>
+      <div class="preco">R$ 49,90/mês</div>
+      <button onclick="abrirPagamento('basico')" class="btn">ASSINAR PLANO</button>
+    </div>
+
+    <div class="plano">
+      <h3>Plano Médio - VidaPlus</h3>
+      <p>Plano intermediário com ampla cobertura assistencial, incluindo consultas com especialistas, exames de média complexidade e internações.</p>
+      <div class="preco">R$ 89,90/mês</div>
+      <button onclick="abrirPagamento('medio')" class="btn">ASSINAR PLANO</button>
+    </div>
+
+    <div class="plano">
+      <h3>Plano Máximo - VidaPremium</h3>
+      <p>Plano completo com cobertura abrangente, incluindo consultas ilimitadas, exames de alta complexidade e internações especiais.</p>
+      <div class="preco">R$ 149,90/mês</div>
+      <button onclick="abrirPagamento('premium')" class="btn">ASSINAR PLANO</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- MODAL -->
+<div id="modalPagamento" class="modal">
+  <div class="modal-content">
+    <span class="fechar" onclick="fecharModal()">&times;</span>
+    <h3 id="planoEscolhido"></h3>
+    <p>Escolha a forma de pagamento:</p>
+    <button class="btn-pagamento" onclick="pagarComPix()">Pagar com Pix</button>
+    <button class="btn-pagamento" onclick="pagarComCartao()">Pagar com Cartão</button>
+    <div id="loadingArea" style="display: none; text-align: center; margin-top: 15px;">
+      <p>Processando...</p>
+      <div class="loading"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+}
+.fechar {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+}
+.btn-pagamento {
+  background: linear-gradient(135deg, #1c9fd3, #000000);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px;
+  width: 80%;
+}
+.btn-pagamento:hover {
+  transform: scale(1.02);
+}
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1c9fd3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+let planoSelecionado = "";
+
+function abrirPagamento(planoKey) {
+  planoSelecionado = planoKey;
+  let planoNome = "";
+  
+  if (planoKey === 'basico') planoNome = "Plano Básico - VidaEssencial";
+  else if (planoKey === 'medio') planoNome = "Plano Médio - VidaPlus";
+  else if (planoKey === 'premium') planoNome = "Plano Máximo - VidaPremium";
+  
+  document.getElementById("planoEscolhido").innerText = "Você escolheu: " + planoNome;
+  document.getElementById("modalPagamento").style.display = "flex";
+}
+
+function fecharModal() {
+  document.getElementById("modalPagamento").style.display = "none";
+}
+
+function pagarComPix() {
+  document.getElementById("loadingArea").style.display = "block";
+  
+  fetch('/criar_pagamento', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `plano=${planoSelecionado}&metodo_pagamento=pix`
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("loadingArea").style.display = "none";
+    
+    if (data.sucesso) {
+      // Redirecionar para o checkout do Mercado Pago
+      window.location.href = data.init_point;
+    } else {
+      alert('Erro ao gerar pagamento: ' + (data.erro || 'Tente novamente'));
+    }
+  })
+  .catch(error => {
+    document.getElementById("loadingArea").style.display = "none";
+    alert('Erro ao processar pagamento: ' + error);
+  });
+}
+
+function pagarComCartao() {
+  document.getElementById("loadingArea").style.display = "block";
+  
+  fetch('/criar_pagamento', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `plano=${planoSelecionado}&metodo_pagamento=cartao`
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("loadingArea").style.display = "none";
+    
+    if (data.sucesso) {
+      // Redirecionar para o checkout do Mercado Pago
+      window.location.href = data.init_point;
+    } else {
+      alert('Erro ao gerar pagamento: ' + (data.erro || 'Tente novamente'));
+    }
+  })
+  .catch(error => {
+    document.getElementById("loadingArea").style.display = "none";
+    alert('Erro ao processar pagamento: ' + error);
+  });
+}
+
+// MENU HAMBURGUER
+const hamburger = document.getElementById("hamburger");
+const menu = document.getElementById("menu");
+
+if(hamburger) {
+  hamburger.addEventListener("click", () => {
+    menu.classList.toggle("active");
+  });
+}
+</script>
+
+</body>
+</html>

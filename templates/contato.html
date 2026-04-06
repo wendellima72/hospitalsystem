@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suporte | Centro Médico Saúde & Vida</title>
+
+<!-- ICONES PROFISSIONAIS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contato.css') }}">
+
+</head>
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Médica" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <!-- AGRUPA AQUI -->
+    <div class="right-icons">
+      <!-- BOTÃO HAMBURGUER -->
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+
+      <!-- BOTÃO SAIR -->
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}" alt="Sair">
+        </a>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+<body>
+
+<div class="container">
+
+    <!-- MENU -->
+    <aside class="perguntas">
+        <p class="ativo" onclick="trocarCategoria('agendamento', this)">
+            <i class="fa-solid fa-calendar-check"></i> Agendamento
+        </p>
+
+        <p onclick="trocarCategoria('consultas', this)">
+            <i class="fa-solid fa-user-doctor"></i> Consultas
+        </p>
+
+        <p onclick="trocarCategoria('gerais', this)">
+            <i class="fa-solid fa-heart"></i> Gerais
+        </p>
+
+        <p onclick="trocarCategoria('odonto', this)">
+            <i class="fa-solid fa-tooth"></i> Odontologia
+        </p>
+
+        <p onclick="trocarCategoria('pagamento', this)">
+            <i class="fa-solid fa-credit-card"></i> Pagamento
+        </p>
+
+        <p onclick="trocarCategoria('trabalho', this)">
+            <i class="fa-solid fa-handshake"></i> Trabalhe Conosco
+        </p>
+
+        <p onclick="trocarCategoria('unidades', this)">
+            <i class="fa-solid fa-hospital"></i> Unidades
+        </p>
+
+        <p onclick="abrirChatSuporte()">
+            <i class="fa-solid fa-headset"></i> Atendimento Online
+        </p>
+    </aside>
+
+    <!-- FAQ -->
+    <main class="faq">
+
+        <!-- AGENDAMENTO -->
+        <div class="categoria ativa" id="agendamento">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Posso ligar diretamente para minha unidade?
+                </div>
+                <div class="resposta">
+                    Sim, você pode entrar em contato diretamente com a unidade desejada.
+                </div>
+            </div>
+        </div>
+
+        <!-- CONSULTAS -->
+        <div class="categoria" id="consultas">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Como remarcar uma consulta?
+                </div>
+                <div class="resposta">
+                    Você pode remarcar pelo sistema ou entrando em contato com a unidade.
+                </div>
+            </div>
+        </div>
+
+        <!-- GERAIS -->
+        <div class="categoria" id="gerais">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Quais horários de atendimento?
+                </div>
+                <div class="resposta">
+                    Funcionamos de segunda a sábado em horário comercial.
+                </div>
+            </div>
+        </div>
+
+        <!-- ODONTO -->
+        <div class="categoria" id="odonto">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Fazem limpeza dental?
+                </div>
+                <div class="resposta">
+                    Sim, oferecemos diversos serviços odontológicos.
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGAMENTO -->
+        <div class="categoria" id="pagamento">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Aceitam cartão?
+                </div>
+                <div class="resposta">
+                    Sim, aceitamos cartão, PIX e dinheiro.
+                </div>
+            </div>
+        </div>
+
+        <!-- TRABALHO -->
+        <div class="categoria" id="trabalho">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Como enviar currículo?
+                </div>
+                <div class="resposta">
+                    Envie seu currículo através da aba Trabalhe Conosco no site.
+                </div>
+            </div>
+        </div>
+
+        <!-- UNIDADES -->
+        <div class="categoria" id="unidades">
+            <div class="item">
+                <div class="pergunta" onclick="toggle(this)">
+                    Onde ficam as unidades?
+                </div>
+                <div class="resposta">
+                    Temos unidades em diversas regiões. Consulte a mais próxima.
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+function toggle(element) {
+    const resposta = element.nextElementSibling;
+
+    resposta.style.display =
+        resposta.style.display === "block" ? "none" : "block";
+}
+
+function trocarCategoria(id, el) {
+    document.querySelectorAll('.categoria').forEach(c => {
+        c.classList.remove('ativa');
+    });
+
+    document.getElementById(id).classList.add('ativa');
+
+    document.querySelectorAll('.perguntas p').forEach(p => {
+        p.classList.remove('ativo');
+    });
+
+    el.classList.add('ativo');
+}
+</script>
+
+<script>
+// HAMBURGUER
+const hamburger = document.getElementById("hamburger");
+const menu = document.getElementById("menu");
+
+hamburger.addEventListener("click", () => {
+  menu.classList.toggle("active");
+});
+
+
+function abrirChatSuporte() {
+    window.location.href = '/chat_cliente';
+}
+
+</script>
+
+</body>
+</html>

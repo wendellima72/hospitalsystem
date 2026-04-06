@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Central de Atendimentos | Suporte</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+    .header { background: #2c3e50; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+    .header h2 { margin: 0; }
+    .header p { margin: 5px 0 0; opacity: 0.8; }
+    .voltar { background: #555; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 15px; font-size: 14px; }
+    .voltar:hover { background: #333; }
+    
+    .filtros { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .filtros input { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+    .filtros select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; cursor: pointer; background: white; }
+    .filtros button { background: #2c3e50; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.3s; }
+    .filtros button:hover { background: #1a252f; }
+    .btn-limpar { background: #95a5a6; }
+    .btn-limpar:hover { background: #7f8c8d; }
+    
+    .ticket-card { background: white; border-radius: 12px; padding: 18px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; border-left: 4px solid transparent; }
+    .ticket-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateX(5px); }
+    .ticket-card.aguardando_suporte { border-left-color: #ff9800; }
+    .ticket-card.aguardando_cliente { border-left-color: #4caf50; }
+    .ticket-card.aberto { border-left-color: #2196f3; }
+    
+    .ticket-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+    .ticket-nome { font-weight: bold; font-size: 16px; color: #2c3e50; }
+    .ticket-nome i { margin-right: 8px; color: #2c3e50; }
+    .ticket-motivo { color: #666; font-size: 14px; margin-bottom: 8px; }
+    .ticket-motivo i { margin-right: 6px; width: 16px; }
+    .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .status-aguardando_suporte { background: #fff3e0; color: #e65100; }
+    .status-aguardando_cliente { background: #e8f5e9; color: #2e7d32; }
+    .status-aberto { background: #e3f2fd; color: #1565c0; }
+    .data { font-size: 12px; color: #999; margin-top: 8px; }
+    .data i { margin-right: 5px; }
+    
+    .sem-tickets { text-align: center; padding: 60px; background: white; border-radius: 12px; color: #999; }
+    .sem-tickets i { font-size: 60px; margin-bottom: 20px; color: #ddd; }
+</style>
+</head>
+<body>
+
+
+
+    
+<div class="container">
+
+
+    <div style="margin-bottom: 20px;">
+    <a href="/suporte" style="background: #2c3e50; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold; font-size: 16px; transition: background 0.3s, transform 0.2s;"
+       onmouseover="this.style.background='#1a252f'; this.style.transform='scale(1.02)';"
+       onmouseout="this.style.background='#2c3e50'; this.style.transform='scale(1)';">
+        <i class="fas fa-arrow-left" style="margin-right: 10px;"></i> Voltar
+    </a>
+    </div>
+    
+    <div class="header">
+        <h2><i class="fas fa-headset"></i> Central de Atendimentos</h2>
+        <p>Gerencie os atendimentos dos clientes</p>
+    </div>
+    
+    <div class="filtros">
+        <input type="text" id="busca" placeholder="Pesquisar por nome, email, motivo ou mensagem..." onkeyup="filtrarTickets()">
+        <select id="filtroStatus" onchange="filtrarTickets()">
+            <option value="todos">Todos os atendimentos</option>
+            <option value="aguardando_suporte">Aguardando resposta</option>
+            <option value="aguardando_cliente">Respondidos</option>
+            <option value="aberto">Abertos</option>
+        </select>
+        <button onclick="filtrarTickets()"><i class="fas fa-search"></i> Filtrar</button>
+        <button class="btn-limpar" onclick="limparFiltros()"><i class="fas fa-undo"></i> Limpar</button>
+    </div>
+    
+    <div id="listaTickets">
+        {% if tickets %}
+            {% for ticket in tickets %}
+            <div class="ticket-card {{ ticket[6] if ticket[6] else ticket[4] }}" 
+                 data-nome="{{ ticket[1]|lower }}" 
+                 data-email="{{ ticket[2]|lower }}" 
+                 data-motivo="{{ ticket[3]|lower }}" 
+                 data-status="{{ ticket[6] if ticket[6] else ticket[4] }}"
+                 data-id="{{ ticket[0] }}"
+                 onclick="window.location.href='/ver_chat_suporte/{{ ticket[0] }}'">
+                <div class="ticket-header">
+                    <div class="ticket-nome">
+                        <i class="fas fa-user-circle"></i> {{ ticket[1] }}
+                    </div>
+                    <span class="status status-{{ ticket[6] if ticket[6] else ticket[4] }}">
+                        {% set status_raw = ticket[6] if ticket[6] else ticket[4] %}
+                        {% if status_raw == 'aguardando_suporte' %}
+                            <i class="fas fa-hourglass-half"></i> Aguardando Suporte
+                        {% elif status_raw == 'aguardando_cliente' %}
+                            <i class="fas fa-reply-all"></i> Aguardando Cliente
+                        {% elif status_raw == 'aberto' %}
+                            <i class="fas fa-inbox"></i> Aberto
+                        {% else %}
+                            {{ ticket[4] }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="ticket-motivo">
+                    <i class="fas fa-tag"></i> {{ ticket[3] }}
+                </div>
+                <div class="data">
+                    <i class="far fa-calendar-alt"></i> {{ ticket[5] }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="sem-tickets">
+                <i class="fas fa-inbox"></i>
+                <p>Nenhum atendimento ativo no momento</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Buscar mensagens para cada ticket e armazenar
+var mensagensCache = {};
+
+function buscarMensagensTicket(ticketId, callback) {
+    if (mensagensCache[ticketId]) {
+        callback(mensagensCache[ticketId]);
+        return;
+    }
+    
+    fetch('/buscar_mensagens/' + ticketId)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        mensagensCache[ticketId] = data;
+        callback(data);
+    });
+}
+
+function filtrarTickets() {
+    var busca = document.getElementById('busca').value.toLowerCase().trim();
+    var filtroStatus = document.getElementById('filtroStatus').value;
+    var tickets = document.querySelectorAll('.ticket-card');
+    var temVisivel = false;
+    var ticketsPendentes = [];
+    
+    // Primeiro, coletar todos os tickets que precisam de busca por mensagem
+    if (busca.length > 0) {
+        tickets.forEach(function(ticket) {
+            if (ticket.classList && !ticket.classList.contains('sem-tickets')) {
+                var nome = ticket.getAttribute('data-nome') || '';
+                var email = ticket.getAttribute('data-email') || '';
+                var motivo = ticket.getAttribute('data-motivo') || '';
+                
+                // Se já encontrou por nome/email/motivo, mostra
+                if (nome.includes(busca) || email.includes(busca) || motivo.includes(busca)) {
+                    var status = ticket.getAttribute('data-status') || '';
+                    var matchStatus = (filtroStatus === 'todos' || status === filtroStatus);
+                    if (matchStatus) {
+                        ticket.style.display = 'block';
+                        temVisivel = true;
+                    } else {
+                        ticket.style.display = 'none';
+                    }
+                } else {
+                    // Precisa buscar nas mensagens
+                    ticketsPendentes.push(ticket);
+                    ticket.style.display = 'none';
+                }
+            }
+        });
+        
+        // Buscar mensagens dos tickets pendentes
+        ticketsPendentes.forEach(function(ticket) {
+            var ticketId = ticket.getAttribute('data-id');
+            if (ticketId) {
+                buscarMensagensTicket(ticketId, function(mensagens) {
+                    var encontrou = false;
+                    for (var i = 0; i < mensagens.length; i++) {
+                        if (mensagens[i].mensagem.toLowerCase().includes(busca)) {
+                            encontrou = true;
+                            break;
+                        }
+                    }
+                    if (encontrou) {
+                        var status = ticket.getAttribute('data-status') || '';
+                        var matchStatus = (filtroStatus === 'todos' || status === filtroStatus);
+                        if (matchStatus) {
+                            ticket.style.display = 'block';
+                            temVisivel = true;
+                        }
+                    }
+                    // Verificar se todos processaram
+                    verificarTodosProcessados(ticketsPendentes, busca, filtroStatus);
+                });
+            }
+        });
+    } else {
+        // Sem busca, apenas filtrar por status
+        tickets.forEach(function(ticket) {
+            if (ticket.classList && !ticket.classList.contains('sem-tickets')) {
+                var status = ticket.getAttribute('data-status') || '';
+                var matchStatus = (filtroStatus === 'todos' || status === filtroStatus);
+                if (matchStatus) {
+                    ticket.style.display = 'block';
+                    temVisivel = true;
+                } else {
+                    ticket.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Remove mensagem de sem resultados se existir
+    var semResultados = document.querySelector('.sem-resultados');
+    if (semResultados) semResultados.remove();
+    
+    // Adiciona mensagem se não houver resultados após um tempo
+    setTimeout(function() {
+        var visiveis = document.querySelectorAll('.ticket-card[style*="display: block"], .ticket-card:not([style*="display: none"])');
+        var temVisivelFinal = false;
+        for (var i = 0; i < visiveis.length; i++) {
+            if (visiveis[i].style.display !== 'none') {
+                temVisivelFinal = true;
+                break;
+            }
+        }
+        
+        if (!temVisivelFinal && tickets.length > 0 && !document.querySelector('.sem-resultados')) {
+            var container = document.getElementById('listaTickets');
+            var msg = document.createElement('div');
+            msg.className = 'sem-tickets sem-resultados';
+            msg.innerHTML = '<i class="fas fa-search"></i><p>Nenhum atendimento encontrado com os filtros aplicados</p>';
+            container.appendChild(msg);
+        }
+    }, 500);
+}
+
+function verificarTodosProcessados(ticketsPendentes, busca, filtroStatus) {
+    // Função auxiliar para verificar processamento (simplificada)
+    setTimeout(function() {
+        var visiveis = document.querySelectorAll('.ticket-card[style*="display: block"]');
+        if (visiveis.length === 0 && ticketsPendentes.length > 0) {
+            var container = document.getElementById('listaTickets');
+            if (!document.querySelector('.sem-resultados')) {
+                var msg = document.createElement('div');
+                msg.className = 'sem-tickets sem-resultados';
+                msg.innerHTML = '<i class="fas fa-search"></i><p>Nenhum atendimento encontrado com a palavra pesquisada</p>';
+                container.appendChild(msg);
+            }
+        }
+    }, 1000);
+}
+
+function limparFiltros() {
+    document.getElementById('busca').value = '';
+    document.getElementById('filtroStatus').value = 'todos';
+    var semResultados = document.querySelector('.sem-resultados');
+    if (semResultados) semResultados.remove();
+    filtrarTickets();
+}
+</script>
+</body>
+</html>

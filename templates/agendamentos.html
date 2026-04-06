@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendamentos | Centro Médico Saúde & Vida</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/agendamentos.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <div class="right-icons">
+      <div class="hamburger" id="hamburger">☰</div>
+
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}">
+        </a>
+      </div>
+    </div>
+
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+<section class="agendamento">
+    <h2>Marcar Consulta</h2>
+
+    <form action="/agendar" method="POST">
+
+        <input type="text" name="nome" placeholder="Seu nome" required>
+
+        <input type="hidden" name="email" value="teste@gmail.com">
+
+        <div class="tipo-box">
+            <label class="tipo">
+                <input type="radio" name="tipo" value="Presencial" required>
+                Consulta Presencial
+            </label>
+
+            <label class="tipo">
+                <input type="radio" name="tipo" value="Online" required>
+                Consulta Online
+            </label>
+        </div>
+
+        <div id="unidadeBox">
+            <select name="unidade">
+                <option>Centro</option>
+                <option>Aldeota</option>
+                <option>Meireles</option>
+            </select>
+        </div>
+
+        <select name="especialidade" required>
+            <option value="">Selecione a especialidade</option>
+            <option>Clínico Geral</option>
+            <option>Cardiologista</option>
+            <option>Dermatologista</option>
+            <option>Pediatra</option>
+            <option>Psicólogo</option>
+            <option>Ortopedista</option>
+        </select>
+
+        <select name="medico" required>
+            <option>Dr. João</option>
+            <option>Dra. Ana</option>
+            <option>Dr. Carlos</option>
+        </select>
+
+        <input type="date" name="data" required>
+
+        <select name="hora" required>
+            <option>08:00</option>
+            <option>09:00</option>
+            <option>10:00</option>
+            <option>14:00</option>
+            <option>15:00</option>
+        </select>
+
+        <button>
+            Agendar Consulta
+        </button>
+
+    </form>
+</section>
+
+<section class="consultas">
+    <h1>Minhas Consultas</h1>
+
+    <div id="listaConsultas">
+
+{% for c in consultas %}
+<div class="card">
+
+    <h3>{{ c[1] }}</h3>
+
+    <p><strong>Especialidade:</strong> {{ c[4] }}</p>
+    <p><strong>Médico:</strong> {{ c[5] }}</p>
+    <p><strong>Data:</strong> {{ c[6] }} às {{ c[7] }}</p>
+    <p><strong>Status:</strong> {{ c[9] }}</p>
+
+<form action="/cancelar_consulta" method="POST">
+    <input type="hidden" name="id" value="{{ c[0] }}">
+
+    <button>
+        Cancelar Consulta
+    </button>
+</form>
+
+</div>
+{% endfor %}
+</section>
+
+<div id="historicoBtn-container">
+<button onclick="toggleHistorico()" class="btn-historico"
+style="width:auto; padding:8px 20px; font-size:14px;">
+Ver Histórico
+</button>
+</div>
+
+<div id="historico" class="box-historico" style="display:none;">
+    <h2 class="titulo-historico">Histórico</h2>
+
+    {% for h in historico %}
+    <div class="card card-historico">
+
+        <h3>{{ h[1] }}</h3>
+
+        <p><strong>Email:</strong> {{ h[2] }}</p>
+        <p><strong>Tipo:</strong> {{ h[3] }}</p>
+        <p><strong>Especialidade:</strong> {{ h[4] }}</p>
+        <p><strong>Médico:</strong> {{ h[5] }}</p>
+        <p><strong>Data:</strong> {{ h[6] }} às {{ h[7] }}</p>
+        <p><strong>Unidade:</strong> {{ h[8] }}</p>
+        <p><strong>Status:</strong> {{ h[9] }}</p>
+
+    </div>
+    {% endfor %}
+</div>
+
+<section class="consultas">
+
+<h1>Prontuários</h1>
+{% if prontuarios %}
+    {% for p in prontuarios %}
+    <div class="card">
+        <p><strong>Médico:</strong> {{ p[3] }}</p>
+        <p><strong>Observações:</strong> {{ p[4] }}</p>
+        <p><strong>Diagnóstico:</strong> {{ p[5] }}</p>
+        <p><strong>Prescrição:</strong> {{ p[6] }}</p>
+        <p><strong>Data:</strong> {{ p[7] }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>Nenhum prontuário disponível</p>
+{% endif %}
+</section>
+
+<section class="consultas">
+<h1>Exames</h1>
+{% if exames %}
+    {% for e in exames %}
+    <div class="card">
+        <p><strong>Médico:</strong> {{ e[3] }}</p>
+        <p><strong>Exame:</strong> {{ e[4] }}</p>
+        <p><strong>Detalhes:</strong> {{ e[5] }}</p>
+        <p><strong>Data:</strong> {{ e[6] }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>Nenhum exame solicitado</p>
+{% endif %}
+</section>
+
+</div>
+
+<script>
+const hamburger = document.getElementById("hamburger");
+const menu = document.getElementById("menu");
+
+hamburger.addEventListener("click", () => {
+    menu.classList.toggle("active");
+});
+</script>
+
+<script>
+function toggleHistorico() {
+    const h = document.getElementById("historico");
+    h.style.display = h.style.display === "none" ? "block" : "none";
+}
+</script>
+
+</body>
+</html>

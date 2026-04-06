@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Médico Avançado</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medico.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <div class="right-icons">
+      <div class="hamburger" id="hamburger">☰</div>
+
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}">
+        </a>
+      </div>
+    </div>
+
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+<nav class="selecao">
+    <button onclick="trocarAba('agenda')">Agenda</button>  
+    <button onclick="trocarAba('prontuario')">Prontuário</button>
+    <button onclick="trocarAba('exames')">Exames</button>
+    <button onclick="trocarAba('historico')">Histórico</button>
+</nav>
+
+<!-- ================= AGENDA ================= -->
+<section id="agenda" class="aba ativa">
+    <h2>Agenda</h2>
+
+    <input type="text" id="busca" placeholder="Buscar paciente..." onkeyup="filtrarPaciente()">
+
+    <div id="listaAgenda">
+
+    {% for c in consultas %}
+    <div class="card">
+
+        <h3>{{ c[1] }}</h3>
+
+        <p><strong>Email:</strong> {{ c[2] }}</p>
+        <p><strong>Especialidade:</strong> {{ c[4] }}</p>
+        <p><strong>Médico:</strong> {{ c[5] }}</p>
+        <p><strong>Tipo:</strong> {{ c[3] }}</p>
+
+        {% if c[3] == 'Presencial' %}
+        <p><strong>Unidade:</strong> {{ c[8] }}</p>
+        {% endif %}
+
+        <p><strong>Data:</strong> {{ c[6] }}</p>
+        <p><strong>Hora:</strong> {{ c[7] }}</p>
+
+        <p><strong>Status:</strong> 
+            <span class="status">{{ c[9] }}</span>
+        </p>
+
+        <form action="/atualizar_status" method="POST">
+            <input type="hidden" name="id" value="{{ c[0] }}">
+
+            <select name="status">
+                <option value="Aguardando">Aguardando</option>
+                <option value="Em atendimento">Em atendimento</option>
+                <option value="Finalizado">Finalizado</option>
+            </select>
+
+            <button type="submit">Atualizar</button>
+        </form>
+
+    </div>
+    {% endfor %}
+
+    </div>
+</section>
+
+<!-- ================= PRONTUÁRIO ================= -->
+<section id="prontuario" class="aba">
+    <h2>Prontuário</h2>
+
+    <form action="{{ url_for('agendamento.salvar_prontuario') }}" method="POST">
+
+        <select id="select_paciente_prontuario" required onchange="preencherPacienteProntuario()">
+            {% for p in pacientes %}
+            <option value="{{ p[0] }}|{{ p[1] }}">{{ p[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="hidden" name="paciente_nome" id="paciente_nome_prontuario">
+        <input type="hidden" name="paciente_email" id="paciente_email_prontuario">
+
+        <label>Observações</label>
+        <textarea name="observacoes" required></textarea>
+
+        <label>Diagnóstico</label>
+        <textarea name="diagnostico" required></textarea>
+
+        <label>Prescrição</label>
+        <textarea name="prescricao" required></textarea>
+
+        <button type="submit">Salvar Prontuário</button>
+
+    </form>
+</section>
+
+<!-- ================= EXAMES ================= -->
+<section id="exames" class="aba">
+    <h2>Solicitação de Exames</h2>
+
+    <form action="{{ url_for('agendamento.solicitar_exame') }}" method="POST">
+
+        <select id="select_paciente_exame" required onchange="preencherPacienteExame()">
+            {% for p in pacientes %}
+            <option value="{{ p[0] }}|{{ p[1] }}">{{ p[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="hidden" name="paciente_nome" id="paciente_nome_exame">
+        <input type="hidden" name="paciente_email" id="paciente_email_exame">
+
+        <input type="text" name="exame" placeholder="Nome do exame" required>
+
+        <textarea name="detalhes" placeholder="Detalhes clínicos" required></textarea>
+
+        <button type="submit">Solicitar Exame</button>
+
+    </form>
+
+</section>
+
+<!-- ================= HISTÓRICO ================= -->
+<section id="historico" class="aba">
+    <h2>Histórico de Atendimentos</h2>
+
+    <input type="text" id="buscaHistorico" placeholder="Pesquisar..." onkeyup="filtrarHistorico()">
+
+    <div id="listaHistorico">
+
+    {% for h in historico %}
+    <div class="card">
+
+        <h3>{{ h[1] }}</h3>
+
+        <p><strong>Especialidade:</strong> {{ h[4] }}</p>
+        <p><strong>Médico:</strong> {{ h[5] }}</p>
+        <p><strong>Data:</strong> {{ h[6] }}</p>
+        <p><strong>Hora:</strong> {{ h[7] }}</p>
+
+        <p><strong>Status:</strong> 
+            <span class="status finalizado">Finalizado</span>
+        </p>
+
+    </div>
+    {% endfor %}
+
+    </div>
+</section>
+
+<script>
+function trocarAba(id) {
+    document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+    document.getElementById(id).classList.add('ativa');
+}
+
+// 🔥 PREENCHER PRONTUÁRIO
+function preencherPacienteProntuario() {
+    let valor = document.getElementById("select_paciente_prontuario").value.split("|");
+    document.getElementById("paciente_nome_prontuario").value = valor[0];
+    document.getElementById("paciente_email_prontuario").value = valor[1];
+}
+
+// 🔥 PREENCHER EXAME
+function preencherPacienteExame() {
+    let valor = document.getElementById("select_paciente_exame").value.split("|");
+    document.getElementById("paciente_nome_exame").value = valor[0];
+    document.getElementById("paciente_email_exame").value = valor[1];
+}
+
+// 🔥 CORREÇÃO PRINCIPAL (AUTO PREENCHIMENTO)
+window.onload = function() {
+    preencherPacienteProntuario();
+    preencherPacienteExame();
+}
+
+// 🔎 FILTROS
+function filtrarPaciente() {
+    let input = document.getElementById("busca").value.toLowerCase();
+    let cards = document.querySelectorAll("#listaAgenda .card");
+
+    cards.forEach(card => {
+        let nome = card.querySelector("h3").textContent.toLowerCase();
+        card.style.display = nome.includes(input) ? "block" : "none";
+    });
+}
+
+function filtrarHistorico() {
+    let input = document.getElementById("buscaHistorico").value.toLowerCase();
+    let cards = document.querySelectorAll("#listaHistorico .card");
+
+    cards.forEach(card => {
+        let nome = card.querySelector("h3").textContent.toLowerCase();
+        card.style.display = nome.includes(input) ? "block" : "none";
+    });
+}
+
+const hamburger = document.getElementById("hamburger");
+const menu = document.getElementById("menu");
+
+hamburger.addEventListener("click", () => {
+    menu.classList.toggle("active");
+});
+</script>
+
+</body>
+</html>

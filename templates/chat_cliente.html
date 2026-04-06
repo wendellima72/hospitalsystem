@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atendimento Online</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat_cliente.css') }}">
+
+</head>
+<body>
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Médica" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <!-- AGRUPA AQUI -->
+    <div class="right-icons">
+      <!-- BOTÃO HAMBURGUER -->
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+
+      <!-- BOTÃO SAIR -->
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}" alt="Sair">
+        </a>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+<div class="chat-container">
+
+    <div style="margin-bottom: 25px;">
+    <a href="/contato" style="background: #2c3e50; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold; font-size: 16px; transition: background 0.3s, transform 0.2s;" 
+       onmouseover="this.style.background='#1a252f'; this.style.transform='scale(1.02)';"
+       onmouseout="this.style.background='#2c3e50'; this.style.transform='scale(1)';">
+        <i class="fas fa-arrow-left" style="margin-right: 10px;"></i> Voltar
+    </a>
+    </div>
+
+    <h2><i class="fa-solid fa-headset"></i> Atendimento Online</h2>
+    
+    <!-- SÓ MOSTRA O BOTÃO DE NOVO ATENDIMENTO SE NÃO TIVER TICKET ATIVO -->
+    {% set tem_ticket_aberto = false %}
+    {% for ticket in tickets %}
+        {% if ticket[2] != 'fechado' %}
+            {% set tem_ticket_aberto = true %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if not tem_ticket_aberto %}
+    <div class="abrir-chat" onclick="abrirModal()">
+        <i class="fa-regular fa-message"></i>
+        <h3>Novo atendimento</h3>
+        <p>Clique aqui para abrir um chat com o suporte</p>
+    </div>
+    {% else %}
+    <div class="aviso-ticket-ativo">
+        <i class="fa-solid fa-info-circle"></i> 
+        <strong>Você já possui um atendimento ativo!</strong><br>
+        Para abrir um novo atendimento, finalize o atual clicando em "Finalizar atendimento" na conversa.
+    </div>
+    {% endif %}
+
+    <h3 style="margin-top: 40px;">Meus atendimentos</h3>
+    
+    {% if tickets %}
+        {% for ticket in tickets %}
+        <div class="ticket-card" onclick="window.location.href='/ver_chat/{{ ticket[0] }}'">
+            <strong>{{ ticket[1] }}</strong>
+            <span class="status status-{{ ticket[2] }}">{{ ticket[2].replace('_', ' ') }}</span>
+            <p><small>Aberto em: {{ ticket[3] }}</small></p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center; color: #666;">Nenhum atendimento realizado</p>
+    {% endif %}
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>Abrir atendimento</h3>
+        <form action="/abrir_ticket" method="POST">
+            <select name="motivo" required>
+                <option value="">Selecione o motivo</option>
+                <option value="Dúvida sobre agendamento">Dúvida sobre agendamento</option>
+                <option value="Problema com pagamento">Problema com pagamento</option>
+                <option value="Cancelamento de consulta">Cancelamento de consulta</option>
+                <option value="Reclamação">Reclamação</option>
+                <option value="Sugestão">Sugestão</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <textarea name="mensagem" placeholder="Descreva seu problema..." rows="5" required></textarea>
+            <button type="submit" class="btn">Enviar</button>
+        </form>
+        <button onclick="fecharModal()" style="margin-top: 10px; padding: 10px; background: #ccc; border: none; border-radius: 5px; cursor: pointer;">Cancelar</button>
+    </div>
+</div>
+
+<script>
+function abrirModal() {
+    // Verificar novamente se já tem ticket ativo antes de abrir o modal
+    fetch('/verificar_ticket_ativo')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.tem_ticket_aberto) {
+            alert('Você já possui um atendimento ativo! Finalize o atual para abrir um novo.');
+        } else {
+            document.getElementById('modal').style.display = 'block';
+        }
+    });
+}
+function fecharModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+var hamburger = document.getElementById("hamburger");
+var menu = document.getElementById("menu");
+if(hamburger) {
+    hamburger.addEventListener("click", function() {
+        menu.classList.toggle("active");
+    });
+}
+</script>
+</body>
+</html>

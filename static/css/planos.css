@@ -1,0 +1,164 @@
+html, body {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.login img {
+  width: 40px; /* tamanho do ícone */
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login img:hover {
+  transform: scale(1.1);
+}
+
+
+.planos{
+  text-align:center;
+  padding:60px 20px;
+}
+
+.planos h2{
+  color:#1f6f8b;
+  margin-bottom:40px;
+}
+
+.planos-container{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  flex-wrap:wrap;
+}
+
+/* CARD CORRETO */
+.plano{
+  background:#1f6f8b;
+  color:white;
+  width:280px;
+  padding:25px;
+  border-radius:15px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  transition:0.3s;
+}
+
+.plano:hover{
+  transform:translateY(-10px);
+}
+
+.plano p{
+  font-size:14px;
+}
+
+.preco{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.btn{
+  background:#a8d5e5;
+  border:none;
+  padding:10px;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:bold;
+  color:#1f6f8b;
+}
+
+.btn:hover{
+  background:white;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  width:300px;
+  text-align:center;
+}
+
+.fechar{
+  float:right;
+  cursor:pointer;
+}
+
+.btn-pagamento{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  background:#1f6f8b;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* ===================== RESPONSIVO ===================== */
+
+/* tablet */
+@media(max-width:820px){
+
+  .topbar{
+    height:80px;
+  }
+
+  .logo{
+    width:95px;
+  }
+
+  .medic-name{
+    font-size:1rem;
+  }
+
+  .menu ul{
+    gap:18px;
+  }
+}
+
+/* celular */
+@media(max-width:480px){
+
+  .topbar{
+    height:70px;
+  }
+
+  .logo{
+    width:130px;
+  }
+
+  .medic-name{
+    display:none;
+  }
+
+  .menu ul{
+    gap:12px;
+  }
+
+  .menu ul li a{
+    font-size:0.9rem;
+  }
+
+  .banner h2{
+    font-size:1.7rem;
+  }
+}
+
+.login img {
+  width: 38px;
+  cursor: pointer;
+  position: relative;
+  margin-top: 5px;
+}

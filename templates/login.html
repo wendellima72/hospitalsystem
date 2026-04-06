@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centro Médico Saúde & Vida | Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+<header class="topo">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo" class="logo">
+</header>
+
+<div class="container">
+    <h1>Saúde & Vida</h1>
+    <div class="subtitle">Sistema de Agendamento de Exames</div>
+
+    <!-- LOGIN -->
+    <div id="loginBox">
+        <h2>Login</h2>
+
+        <form action="/login" method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        <div class="link" onclick="mostrarRegistro()">Criar Conta</div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="registroBox" class="hidden">
+        <h2>CRIAR CONTA</h2>
+        <div class="small-text">Insira seus dados</div>
+
+        <form action="/cadastrar" method="POST">
+
+            <input type="text" name="nome" placeholder="Nome Completo" required>
+
+            <div class="row">
+                <input type="text" name="cpf" placeholder="CPF" required>
+                <input type="text" name="telefone" placeholder="Telefone" required>
+            </div>
+
+            <div class="row">
+                <input type="date" name="nascimento" required>
+                <select name="genero" required>
+                    <option value="">Gênero</option>
+                    <option>Masculino</option>
+                    <option>Feminino</option>
+                    <option>Outro</option>
+                </select>
+            </div>
+
+            <input type="email" name="email" placeholder="Email" required>
+
+            <div class="row">
+                <input type="password" name="senha" placeholder="Senha" required>
+                <input type="password" id="confirmPass" placeholder="Confirmar Senha" required>
+            </div>
+
+            <button type="submit">Criar Conta</button>
+        </form>
+
+        <div class="link" onclick="mostrarLogin()">Já tem uma conta? Faça login</div>
+    </div>
+</div>
+
+<script>
+function mostrarRegistro(){
+    document.getElementById('loginBox').classList.add('hidden');
+    document.getElementById('registroBox').classList.remove('hidden');
+}
+
+function mostrarLogin(){
+    document.getElementById('registroBox').classList.add('hidden');
+    document.getElementById('loginBox').classList.remove('hidden');
+}
+</script>
+
+</body>
+</html>

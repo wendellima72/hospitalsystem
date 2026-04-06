@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro Médico Saúde & Vida</title>
+
+  <!-- CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/painel_cliente.css') }}">
+
+  <!-- ICONES -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body style="background-color: white;">
+
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Médica" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <!-- AGRUPA AQUI -->
+    <div class="right-icons">
+      <!-- BOTÃO HAMBURGUER -->
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+
+      <!-- BOTÃO SAIR -->
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}" alt="Sair">
+        </a>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+<!-- ===== SLIDESHOW ===== -->
+<div class="slideshow">
+  <button class="prev" onclick="trocarSlide(-1)">❮</button>
+
+  <div class="slide">
+    <img id="slide-img" src="{{ url_for('static', filename='img/med1.png') }}">
+    <p id="slide-text"></p>
+  </div>
+
+  <button class="next" onclick="trocarSlide(1)">❯</button>
+</div>
+
+<!-- ===== SCRIPT SLIDE + MENU ===== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // SLIDES
+  const slides = [
+    {
+      img: "{{ url_for('static', filename='img/med1.png') }}",
+      text: "",
+      position: "center 40%"
+    },
+    {
+      img: "{{ url_for('static', filename='img/med2.png') }}",
+      text: "",
+      position: "center 30%"
+    }
+  ];
+
+  let indice = 0;
+
+  function mostrarSlide() {
+    const img = document.getElementById("slide-img");
+    img.src = slides[indice].img;
+    img.style.objectPosition = slides[indice].position;
+    document.getElementById("slide-text").innerText = slides[indice].text;
+  }
+
+  function trocarSlide(direcao) {
+    indice += direcao;
+
+    if (indice >= slides.length) indice = 0;
+    if (indice < 0) indice = slides.length - 1;
+
+    mostrarSlide();
+  }
+
+  window.trocarSlide = trocarSlide;
+  mostrarSlide();
+
+  setInterval(() => {
+    trocarSlide(1);
+  }, 5000);
+
+  // MENU HAMBURGUER
+  const hamburger = document.getElementById("hamburger");
+  const menu = document.getElementById("menu");
+
+  hamburger.addEventListener("click", () => {
+    menu.classList.toggle("active");
+  });
+
+});
+</script>
+
+<!-- CARDS -->
+<section class="cards-section">
+  <div class="cards-container">
+
+    <a href="/agendamentos" class="card">
+  <i class="fas fa-calendar-alt"></i>
+  <h3>AGENDAMENTO</h3>
+    </a>
+
+  <a href="/trabalhe_conosco" class="card">
+  <i class="fas fa-user-md"></i>
+  <h3>TRABALHE CONOSCO</h3>
+    </a>
+
+    <a href="/planos" class="card">
+  <i class="fas fa-file-invoice-dollar"></i>
+  <h3>PLANOS</h3>
+    </a>
+
+  <a href="/contato" class="card">
+  <i class="fas fa-headset"></i>
+  <h3>ATENDIMENTO</h3>
+    </a>
+
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="sobre">
+
+ <h1 style="text-align: center; color: #1b6d8c;"> Quem Somos </h1> <br>
+ 
+<div style="text-align: center;">
+
+O <strong style="color: #1b6d8c;">Centro Médico Saúde & Vida</strong> foi criado com o propósito de oferecer atendimento de excelência, unindo profissionalismo, tecnologia e cuidado humanizado. <br> 
+Desde sua fundação, a instituição tem como prioridade garantir segurança, eficiência e qualidade em todos os serviços prestados. <br>
+O hospital conta com uma equipe altamente qualificada, formada por médicos especialistas, enfermeiros e profissionais da saúde treinados constantemente para atuar com ética, responsabilidade e precisão. <br>
+O compromisso com a atualização profissional garante diagnósticos rápidos e tratamentos eficazes. <br>
+Além disso, o Centro Médico Saúde & Vida investe continuamente em maquinários modernos e equipamentos de última geração, como aparelhos de diagnóstico por imagem, laboratório completo e centro cirúrgico equipado com tecnologia avançada. <br>
+Essa infraestrutura permite maior agilidade nos atendimentos e mais segurança para os pacientes. <br>
+Reconhecido pelo padrão de qualidade e organização, o Centro Médico Saúde & Vida se destaca pelo atendimento eficiente, ambiente estruturado e compromisso permanente com a excelência na área da saúde. <br>
+</div>
+</section>
+
+<!-- TEMPLATES DE VALORES - VERSÃO BONITA COM ÍCONES -->
+<section class="valores-section" >
+  <div class="valores-header">
+    <h2>Nossos Valores</h2>
+    <p>Priorizando sempre aquilo que nos move</p>
+  </div>
+  <div class="valores-grid">
+    <!-- Amor -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-heart"></i>
+      </div>
+      <h3>Amor</h3>
+      <p>em tudo que fazemos.</p>
+    </div>
+    <!-- Cuidado -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-hand-holding-heart"></i>
+      </div>
+      <h3>Cuidado</h3>
+      <p>enviada amizade.</p>
+    </div>
+    <!-- Transparência -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-search"></i>
+      </div>
+      <h3>Transparência</h3>
+      <p>que demonstrem respeito e ética.</p>
+    </div>
+    <!-- Pessoas -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3>Pessoas</h3>
+      <p>com comprometimento de serviço com humanismo.</p>
+    </div>
+    <!-- Inovação -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <h3>Inovação</h3>
+      <p>com foco em melhorias decidiadas e resultativas.</p>
+    </div>
+    <!-- Responsabilidade Social -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-globe"></i>
+      </div>
+      <h3>Responsabilidade Social</h3>
+      <p>como relações assíamas.</p>
+    </div>
+    <!-- Qualidade -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-medal"></i>
+      </div>
+      <h3>Qualidade</h3>
+      <p>sem recorte esforços para oferecer excelência sempre.</p>
+    </div>
+    <!-- Acessibilidade -->
+    <div class="valor-card">
+      <div class="valor-icon">
+        <i class="fas fa-universal-access"></i>
+      </div>
+      <h3>Acessibilidade</h3>
+      <p>quer aprimoramos dignidade para todas.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Estilos exclusivos para a seção de valores */
+.valores-section {
+  max-width: 1300px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.valores-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.valores-header h2 {
+  font-size: 2.2rem;
+  color: #1b6d8c;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.valores-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.valores-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.valor-card {
+  background: white;
+  border-radius: 20px;
+  padding: 35px 25px 30px;
+  text-align: center;
+  width: 260px;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eef2f7;
+  cursor: default;
+}
+
+.valor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(28, 159, 211, 0.15);
+  border-color: #1c9fd3;
+}
+
+.valor-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #e8f4fc 0%, #d4eaf5 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.valor-icon i {
+  font-size: 32px;
+  color: #1c9fd3;
+}
+
+.valor-card h3 {
+  color: #1b6d8c;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.valor-card p {
+  color: #555;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .valor-card {
+    width: calc(50% - 30px);
+    min-width: 200px;
+    padding: 25px 15px;
+  }
+  
+  .valores-header h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 550px) {
+  .valor-card {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+</style>
+
+<section class="unidades">
+
+ <h1 style="text-align: center; color: #1b6d8c;"> Conheça Nossas Unidades </h1> <br>
+ 
+        <div class="professores">
+
+            <div class="unidade">
+                <h3 style="text-align: center; color: #1b6d8c;"> Unidade 01 - Aldeota </h3>
+                <p><strong>Telefone:</strong> (85) 3224-7812</p>
+<p><strong>Endereço:</strong> Rua Barão do Rio Branco, 845 - Centro, Fortaleza-CE / CEP: 60.025-060</p>
+<p><strong>Horário:</strong> SEG a SEX: 08:00 às 18:00 | SÁB: 08:00 às 12:00</p>
+<p><strong>Responsáveis técnicos:</strong>
+Carlos Henrique Souza Lima. CRM: 4587/CE
+Mariana Alves Ferreira. CRO: 3345/CE
+CRM da Clínica: 1123-CE
+CRO da Clínica: CE-EPAO-221</p>
+
+<div class="container-botao">
+    <a href="https://www.google.com/maps?q=Fortaleza" target="_blank" class="botao-maps">
+         Ver no Google Maps
+    </a>
+</div>
+
+            </div>
+
+
+            <div class="unidade">
+                <h3 style="text-align: center; color: #1b6d8c;"> Unidade 02 - Messejana </h3>
+                <p><strong>Telefone:</strong> (85) 98765-4321</p>
+<p><strong>Endereço:</strong> Avenida Dom Luís, 2300 - Aldeota, Fortaleza-CE / CEP: 60.160-230</p>
+<p><strong>Horário:</strong> SEG a SEX: 09:00 às 19:00 | SÁB: 08:00 às 13:00</p>
+<p><strong>Responsáveis técnicos:</strong>
+Fernanda Costa Ribeiro. CRM: 7894/CE
+Lucas Martins Bezerra. CRO: 5567/CE
+CRM da Clínica: 2098-CE
+CRO da Clínica: CE-EPAO-332</p> <br>
+
+<div class="container-botao">
+    <a href="https://www.google.com/maps?q=Fortaleza" target="_blank" class="botao-maps">
+         Ver no Google Maps
+    </a>
+</div>
+
+            </div>
+
+            <div class="unidade">
+                 <h3 style="text-align: center; color: #1b6d8c;"> Unidade 03 - Parangaba </h3>
+                <p><strong>Telefone:</strong> (85) 98765-4321</p>
+<p><strong>Endereço:</strong> Avenida Dom Luís, 2300 - Aldeota, Fortaleza-CE / CEP: 60.160-230</p>
+<p><strong>Horário:</strong> SEG a SEX: 09:00 às 19:00 | SÁB: 08:00 às 13:00</p>
+<p><strong>Responsáveis técnicos:</strong>
+Fernanda Costa Ribeiro. CRM: 7894/CE
+Lucas Martins Bezerra. CRO: 5567/CE
+CRM da Clínica: 2098-CE
+CRO da Clínica: CE-EPAO-332</p> <br>
+
+<div class="container-botao">
+    <a href="https://www.google.com/maps?q=Fortaleza" target="_blank" class="botao-maps">
+         Ver no Google Maps
+    </a>
+</div>
+
+            </div>
+        </div>
+</section>
+
+<footer style="background-color: #1b6d8c;">
+
+Este projeto foi desenvolvido exclusivamente para fins escolares, com o objetivo de aplicar conhecimentos acadêmicos na prática.<br>
+© 2026 - EEEP Dona Creusa do Carmo Rocha
+
+</footer>
+
+</body>
+</html>

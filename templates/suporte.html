@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/suporte.css') }}">
+
+<title>Painel</title>
+
+<style>
+    /* Estilos adicionais para profissionalismo */
+    :root {
+        --verde: #27ae60;
+        --verde-escuro: #219a52;
+        --azul: #3498db;
+        --azul-principal: #1c9fd3;
+        --vermelho: #e74c3c;
+        --cinza: #95a5a6;
+    }
+
+    /* Container dos botões de navegação - PRIMEIRO */
+    .tabs-container {
+        padding: 20px 20px 0 20px;
+        margin-bottom: 0;
+    }
+
+    .tabs {
+        background: white;
+        border-radius: 12px;
+        padding: 8px;
+        display: inline-flex;
+        gap: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabs button {
+        padding: 12px 28px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        color: #666;
+    }
+
+    .tabs button:hover {
+        background: rgba(28, 159, 211, 0.1);
+        color: #1c9fd3;
+    }
+
+    /* Container da busca - SEGUNDO */
+    .search-container {
+        padding: 15px 20px;
+    }
+
+    .search-box {
+        background: white;
+        border-radius: 12px;
+        padding: 12px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .search-box input {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: #1c9fd3;
+        box-shadow: 0 0 0 3px rgba(28, 159, 211, 0.1);
+    }
+
+    .search-box button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-buscar {
+        background: #1c9fd3;
+        color: white;
+    }
+
+    .btn-buscar:hover {
+        background: #1580ac;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(28, 159, 211, 0.3);
+    }
+
+    .btn-limpar {
+        background: #95a5a6;
+        color: white;
+    }
+
+    .btn-limpar:hover {
+        background: #7f8c8d;
+        transform: translateY(-1px);
+    }
+
+    /* HEADER COM AÇÕES (Título + Botão Criar Usuário) - TERCEIRO */
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: white;
+        border-radius: 12px;
+        margin: 0 20px 20px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Botão Criar Usuário profissional */
+    .btn-criar-usuario {
+        background: linear-gradient(135deg, #1c9fd3, #000000);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(28, 159, 211, 0.3);
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-criar-usuario:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(28, 159, 211, 0.4);
+        background: linear-gradient(135deg, #1580ac, #1a1a1a);
+    }
+
+    .btn-criar-usuario:active {
+        transform: translateY(0);
+    }
+
+    .btn-criar-usuario i {
+        font-size: 16px;
+    }
+
+    /* Título da página */
+    .page-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-title i {
+        color: #1c9fd3;
+        font-size: 24px;
+    }
+
+    /* ESTILOS DO HEADER PRINCIPAL COM BOTÃO SAIR */
+    .main-header {
+        background: linear-gradient(135deg, #1c9fd3, #000000);
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .main-header h1 i {
+        font-size: 0px;
+        color: #1c9fd3;
+    }
+
+    /* Botão Sair */
+    .btn-sair {
+          background: linear-gradient(135deg, #1c9fd3, #000000);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-sair:hover {
+        background: #e74c3c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-sair:active {
+        transform: translateY(0);
+    }
+
+    .btn-sair i {
+        font-size: 16px;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .tabs-container {
+            padding: 15px 15px 0 15px;
+        }
+        
+        .tabs {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .tabs button {
+            flex: 1;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+        
+        .search-container {
+            padding: 15px;
+        }
+        
+        .search-box {
+            flex-direction: column;
+        }
+        
+        .search-box input,
+        .search-box button {
+            width: 100%;
+        }
+        
+        .header-actions {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+            margin: 0 15px 15px 15px;
+            padding: 15px;
+        }
+        
+        .page-title {
+            font-size: 18px;
+        }
+        
+        .btn-criar-usuario {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .main-header {
+            padding: 12px 20px;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .main-header h1 {
+            font-size: 20px;
+        }
+
+        .btn-sair {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Container dos botões de navegação - TOTALMENTE CENTRALIZADO */
+    .tabs-container {
+        padding: 20px 20px 0 20px;
+        margin-bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .tabs {
+        background: white;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        gap: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        justify-content: center;
+    }
+
+    /* Responsivo para mobile */
+    @media (max-width: 768px) {
+        .tabs-container {
+            padding: 15px 15px 0 15px;
+        }
+        
+        .tabs {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .tabs button {
+            flex: 1;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+    }
+
+    /* ================= CHAT CARD ESTILIZADO ================= */
+    .chat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .chat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(28, 159, 211, 0.15);
+    }
+
+    /* Header do card */
+    .chat-card-header {
+        margin-bottom: 25px;
+    }
+
+    .chat-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #1c9fd3, #1580ac);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px auto;
+        box-shadow: 0 5px 15px rgba(28, 159, 211, 0.3);
+    }
+
+    .chat-icon i {
+        font-size: 32px;
+        color: white;
+    }
+
+    .chat-card-header h3 {
+        font-size: 24px;
+        color: #2c3e50;
+        margin: 0 0 8px 0;
+    }
+
+    .chat-card-header p {
+        font-size: 14px;
+        color: #888;
+        margin: 0;
+    }
+
+    /* Mensagem descritiva */
+    .chat-card-message {
+        background: #f8faff;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border-left: 4px solid #1c9fd3;
+    }
+
+    .chat-card-message p {
+        margin: 0;
+        color: #555;
+        font-size: 14px;
+    }
+
+    /* Botão central */
+    .chat-card-button {
+        margin-top: 10px;
+    }
+
+    .btn-chat-central {
+        background: linear-gradient(135deg, #1c9fd3, #000000);
+        color: white;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .btn-chat-central i:first-child {
+        font-size: 18px;
+    }
+
+    .btn-chat-central i:last-child {
+        font-size: 14px;
+        transition: transform 0.3s;
+    }
+
+    .btn-chat-central:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 20px rgba(28, 159, 211, 0.4);
+    }
+
+    .btn-chat-central:hover i:last-child {
+        transform: translateX(5px);
+    }
+
+    /* Responsividade do chat */
+    @media (max-width: 768px) {
+        .chat-card {
+            padding: 30px 20px;
+            margin: 0 15px;
+        }
+        
+        .chat-icon {
+            width: 55px;
+            height: 55px;
+        }
+        
+        .chat-icon i {
+            font-size: 26px;
+        }
+        
+        .chat-card-header h3 {
+            font-size: 20px;
+        }
+        
+        .chat-card-header p {
+            font-size: 12px;
+        }
+        
+        .chat-card-message p {
+            font-size: 13px;
+        }
+        
+        .btn-chat-central {
+            padding: 14px 28px;
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .chat-card {
+            padding: 25px 15px;
+        }
+        
+        .chat-icon {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .chat-icon i {
+            font-size: 24px;
+        }
+        
+        .chat-card-header h3 {
+            font-size: 18px;
+        }
+        
+        .btn-chat-central {
+            padding: 12px 24px;
+            font-size: 13px;
+            gap: 8px;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER PRINCIPAL COM BOTÃO SAIR -->
+<header class="main-header">
+    <h1>
+        <i class="fas fa-headset"></i>
+        Painel de Suporte
+    </h1>
+    <a href="/logout" class="btn-sair" onclick="return confirmSair(event)">
+        <i class="fas fa-sign-out-alt"></i>
+        Sair do Sistema
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</header>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+    <div class="box">
+        <i class="fa-solid fa-users icon"></i>
+        <p id="total_usuarios">{{ total_usuarios }} Usuários</p>
+    </div>
+
+    <div class="box">
+        <i class="fa-solid fa-calendar-check icon"></i>
+        <p id="consultas_hoje">{{ consultas_hoje }} Consultas Hoje</p>
+    </div>
+
+    <div class="box">
+        <i class="fa-solid fa-comments icon"></i>
+        <p id="total_mensagens_chat">0 Mensagens</p>
+    </div>
+
+    <div class="box">
+        <i class="fa-solid fa-clock icon"></i>
+        <p id="total_pendentes_chat">0 Pendentes</p>
+    </div>
+
+</div>
+
+<!-- 1º - BOTÕES DE NAVEGAÇÃO (EM CIMA) -->
+<div class="tabs-container">
+    <div class="tabs">
+        <button onclick="mostrar('usuarios')">Usuários</button>
+        <button onclick="mostrar('consultas'); carregarTodasConsultas()">Consultas</button>
+        <button onclick="mostrar('chat')">Suporte</button>
+    </div>
+</div>
+
+<!-- 2º - BUSCA (SEM EMOJI DE LUPA) -->
+<div class="search-container">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Digite nome, email ou CPF (mínimo 2 caracteres)">
+        <button onclick="buscarUsuarios()" class="btn-buscar">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+        <button onclick="limparBusca()" class="btn-limpar">
+            <i class="fas fa-eraser"></i> Limpar
+        </button>
+    </div>
+</div>
+
+<!-- 3º - HEADER COM GERENCIAMENTO DE USUÁRIOS -->
+<div class="header-actions">
+    <div class="page-title">
+        <i class="fas fa-users-gear"></i>
+        <span>Gerenciamento de Usuários</span>
+    </div>
+    <a href="/criar_usuario" class="btn-criar-usuario">
+        <i class="fas fa-user-plus"></i>
+        Criar Novo Usuário
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- ================= USUÁRIOS ================= -->
+<section id="usuarios" class="secao ativa">
+
+<div class="usuarios card">
+
+    <h3>Usuários</h3>
+
+    <div class="lista-usuarios" id="listaUsuarios">
+
+        {% for u in usuarios %}
+        <div class="user" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1; cursor: pointer;" onclick="carregarUsuario('{{ u[0] }}')">
+                <strong>{{ u[1] }}</strong>
+                <span>{{ u[6] if u[6] else 'Sem plano' }} • {{ u[2] }}</span>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <a href="/editar_usuario/{{ u[0] }}" onclick="event.stopPropagation()" style="background: #3498db; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="/deletar_usuario/{{ u[0] }}" onclick="event.stopPropagation(); return confirm('Tem certeza que deseja deletar este usuário?')" style="background: #e74c3c; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="perfil">
+        <h4>Perfil Completo</h4>
+        <p><strong>Nome:</strong> <span id="nome">---</span></p>
+        <p><strong>Email:</strong> <span id="email">---</span></p>
+        <p><strong>Telefone:</strong> <span id="telefone">---</span></p>
+        <p><strong>CPF:</strong> <span id="cpf">---</span></p>
+        <p><strong>Plano:</strong> <span id="plano">---</span></p>
+        <p><strong>Gênero:</strong> <span id="genero">---</span></p>
+        <p>
+            <strong>Senha:</strong> 
+            <span id="senha" style="display: none;">---</span>
+            <span id="senha_mascarada">••••••••</span>
+            <button onclick="toggleSenha()" style="margin-left: 10px; background: #2c3e50; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">
+                <i class="fas fa-eye"></i> Mostrar
+            </button>
+        </p>
+    </div>
+
+    <h4>Consultas do Usuário</h4>
+    <div style="overflow-x: auto;">
+        <table id="consultas-usuario" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 8px;">Médico</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Especialidade</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Data</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+</section>
+
+<!-- ================= CONSULTAS ================= -->
+<section id="consultas" class="secao">
+
+<div class="consultas card">
+
+    <h3>Todas as Consultas</h3>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+        <select id="filtroData" onchange="filtrarConsultasCompleto()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+            <option value="todas">Todas as datas</option>
+            <option value="futuras">Futuras</option>
+            <option value="passadas">Passadas</option>
+        </select>
+        
+        <input type="text" id="filtroPaciente" placeholder="Filtrar por paciente..." onkeyup="filtrarConsultasCompleto()" style="padding: 8px; width: 200px; border-radius: 5px; border: 1px solid #ddd;">
+        
+        <input type="text" id="filtroMedico" placeholder="Filtrar por médico..." onkeyup="filtrarConsultasCompleto()" style="padding: 8px; width: 200px; border-radius: 5px; border: 1px solid #ddd;">
+        
+        <button onclick="limparFiltrosConsultas()" style="padding: 8px 15px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-eraser"></i> Limpar Filtros
+        </button>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table id="tabela-consultas" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 8px;">Paciente</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Médico</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Especialidade</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Data</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+</section>
+
+<!-- ================= CHAT ================= -->
+<section id="chat" class="secao">
+    <div class="chat-card">
+        
+        <!-- Ícone e título -->
+        <div class="chat-card-header">
+            <div class="chat-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3>Atendimentos Online</h3>
+            <p>Suporte especializado para você</p>
+        </div>
+        
+        <!-- Mensagem descritiva -->
+        <div class="chat-card-message">
+            <p>Clique no botão abaixo para visualizar e responder os atendimentos dos clientes.</p>
+        </div>
+        
+        <!-- Botão central -->
+        <div class="chat-card-button">
+            <button onclick="window.location.href='/suporte_chat'" class="btn-chat-central">
+                <i class="fas fa-comments"></i> 
+                Central de Atendimentos
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+    </div>
+</section>
+
+<script>
+
+// Função de confirmação para sair
+function confirmSair(event) {
+    if (!confirm('Tem certeza que deseja sair do sistema?')) {
+        event.preventDefault();
+        return false;
+    }
+    return true;
+}
+
+// ========== FUNÇÃO PARA CARREGAR ESTATÍSTICAS DO CHAT ==========
+function carregarEstatisticasChat() {
+    fetch('/estatisticas_chat')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('total_mensagens_chat').innerHTML = data.total_mensagens + ' Mensagens';
+        document.getElementById('total_pendentes_chat').innerHTML = data.total_pendentes + ' Pendentes';
+    })
+    .catch(erro => {
+        console.error('Erro ao carregar estatísticas:', erro);
+    });
+}
+
+// ========== FUNÇÃO PARA MOSTRAR/OCULTAR SENHA ==========
+var senhaAtual = '';
+var senhaVisivel = false;
+
+function toggleSenha() {
+    var spanSenha = document.getElementById('senha');
+    var spanMascarada = document.getElementById('senha_mascarada');
+    var botao = event.currentTarget;
+    
+    if (!senhaVisivel) {
+        spanSenha.style.display = 'inline';
+        spanMascarada.style.display = 'none';
+        botao.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar';
+        senhaVisivel = true;
+    } else {
+        spanSenha.style.display = 'none';
+        spanMascarada.style.display = 'inline';
+        botao.innerHTML = '<i class="fas fa-eye"></i> Mostrar';
+        senhaVisivel = false;
+    }
+}
+
+function carregarSenha(userId) {
+    fetch(`/usuario_senha/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+        senhaAtual = data.senha;
+        document.getElementById('senha').innerText = senhaAtual || '---';
+    });
+}
+
+// ========== FUNÇÃO MOSTRAR ==========
+function mostrar(secao){
+    document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+    document.getElementById(secao).classList.add('ativa');
+    if(secao === 'chat') {
+        carregarEstatisticasChat();
+    }
+}
+
+// ========== FUNÇÕES DE BUSCA E USUÁRIOS ==========
+function buscarUsuarios(){
+    let termo = document.getElementById('searchInput').value.trim();
+
+    if(termo.length < 2){
+        alert("Digite pelo menos 2 caracteres para buscar");
+        return;
+    }
+
+    fetch(`/pesquisar_usuarios?q=${encodeURIComponent(termo)}`)
+    .then(res => res.json())
+    .then(data => {
+        let lista = document.getElementById('listaUsuarios');
+        lista.innerHTML = '';
+
+        if(data.length === 0){
+            lista.innerHTML = '<div class="user">Nenhum usuário encontrado</div>';
+            return;
+        }
+
+        data.forEach(u => {
+            lista.innerHTML += `
+                <div class="user" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1; cursor: pointer;" onclick="carregarUsuario('${u[0]}')">
+                        <strong>${u[1]}</strong>
+                        <span>${u[6] || 'Sem plano'} • ${u[2]}</span>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <a href="/editar_usuario/${u[0]}" onclick="event.stopPropagation()" style="background: #3498db; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/deletar_usuario/${u[0]}" onclick="event.stopPropagation(); return confirm('Tem certeza que deseja deletar este usuário?')" style="background: #e74c3c; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    });
+}
+
+function limparBusca(){
+    document.getElementById('searchInput').value = '';
+    location.reload();
+}
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        buscarUsuarios();
+    }
+});
+
+function carregarUsuario(userId){
+    fetch(`/usuario_detalhes/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("nome").innerText = data.nome || '---';
+        document.getElementById("email").innerText = data.email || '---';
+        document.getElementById("telefone").innerText = data.telefone || '---';
+        document.getElementById("cpf").innerText = data.cpf || '---';
+        document.getElementById("plano").innerText = data.plano || 'Sem plano';
+        document.getElementById("genero").innerText = data.genero || '---';
+    });
+
+    fetch(`/consultas_usuario/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+        let tabela = document.getElementById("consultas-usuario");
+        tabela.innerHTML = `
+            <tr style="background-color: #f2f2f2;">
+                <th style="border: 1px solid #ddd; padding: 8px;">Médico</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Especialidade</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Data</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+            </tr>
+        `;
+        
+        if(data.length === 0){
+            tabela.innerHTML += '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhuma consulta encontrada</td>' ;
+        } else {
+            data.forEach(c => {
+                tabela.innerHTML += `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${c.medico || '---'}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${c.especialidade || '---'}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${c.data || '---'}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${c.hora || '---'}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${c.status || '---'}</td>
+                    </tr>
+                `;
+            });
+        }
+    });
+    
+    // Carregar senha
+    carregarSenha(userId);
+    
+    // Resetar estado da senha
+    senhaVisivel = false;
+    document.getElementById('senha').style.display = 'none';
+    document.getElementById('senha_mascarada').style.display = 'inline';
+    const botao = document.querySelector('.perfil button');
+    if (botao) botao.innerHTML = '<i class="fas fa-eye"></i> Mostrar';
+
+    mostrar('usuarios');
+}
+
+// ========== FUNÇÕES DE CONSULTAS CORRIGIDAS ==========
+
+var consultasDataOriginal = [];
+
+function carregarTodasConsultas(){
+    fetch('/todas_consultas')
+    .then(res => res.json())
+    .then(data => {
+        consultasDataOriginal = data;
+        renderConsultas(data);
+    });
+}
+
+function renderConsultas(lista){
+    let tabela = document.getElementById("tabela-consultas");
+    
+    tabela.innerHTML = `
+        <tr style="background-color: #f2f2f2;">
+            <th style="border: 1px solid #ddd; padding: 8px;">Paciente</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Médico</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Especialidade</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Data</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Hora</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+        </table>
+    `;
+
+    if(lista.length === 0){
+        tabela.innerHTML += '<tr><td colspan="6" style="text-align: center; padding: 20px;">Nenhuma consulta encontrada</td>' ;
+    } else {
+        for(var i = 0; i < lista.length; i++) {
+            var c = lista[i];
+            tabela.innerHTML += `
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[0] || '---'}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[1] || '---'}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[2] || '---'}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[3] || '---'}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[5] || '---'}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${c[4] || '---'}</td>
+                </tr>
+            `;
+        }
+    }
+}
+
+function filtrarConsultasCompleto() {
+    if (consultasDataOriginal.length === 0) return;
+    
+    var filtroData = document.getElementById('filtroData').value;
+    var filtroPaciente = document.getElementById('filtroPaciente').value.toLowerCase().trim();
+    var filtroMedico = document.getElementById('filtroMedico').value.toLowerCase().trim();
+    var hoje = new Date().toISOString().split('T')[0];
+    
+    var dadosFiltrados = [];
+    
+    for(var i = 0; i < consultasDataOriginal.length; i++) {
+        var consulta = consultasDataOriginal[i];
+        var paciente = (consulta[0] || '').toLowerCase();
+        var medico = (consulta[1] || '').toLowerCase();
+        var dataConsulta = consulta[3];
+        
+        // Filtro por paciente
+        if (filtroPaciente !== '' && !paciente.includes(filtroPaciente)) continue;
+        
+        // Filtro por médico
+        if (filtroMedico !== '' && !medico.includes(filtroMedico)) continue;
+        
+        // Filtro por data
+        if (filtroData === 'futuras' && dataConsulta < hoje) continue;
+        if (filtroData === 'passadas' && dataConsulta >= hoje) continue;
+        
+        dadosFiltrados.push(consulta);
+    }
+    
+    renderConsultas(dadosFiltrados);
+}
+
+function limparFiltrosConsultas() {
+    document.getElementById('filtroData').value = 'todas';
+    document.getElementById('filtroPaciente').value = '';
+    document.getElementById('filtroMedico').value = '';
+    renderConsultas(consultasDataOriginal);
+}
+
+// Carregar estatísticas ao iniciar
+carregarEstatisticasChat();
+
+// Atualizar estatísticas a cada 30 segundos
+setInterval(carregarEstatisticasChat, 30000);
+
+</script>
+
+</body>
+</html>

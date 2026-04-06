@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trabalhe Conosco | Centro Médico Saúde & Vida</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trabalhe_conosco.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+<header class="topbar">
+  <div class="cont">
+
+    <div class="logo-area">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Médica" class="logo">
+      <h1 class="medic-name">Centro Médico Saúde & Vida</h1>
+    </div>
+
+    <!-- AGRUPA AQUI -->
+    <div class="right-icons">
+      <!-- BOTÃO HAMBURGUER -->
+      <div class="hamburger" id="hamburger">
+        ☰
+      </div>
+
+      <div class="login">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/login.png') }}">
+        </a>
+      </div>
+    </div>
+
+
+    <!-- MENU -->
+    <nav class="menu" id="menu">
+      <ul>
+        <li><a href="/painel_cliente">Home</a></li>
+        <li><a href="/agendamentos">Agendamentos</a></li>
+        <li><a href="/planos">Planos</a></li>
+        <li><a href="/trabalhe_conosco">Trabalhe Conosco</a></li>
+      </ul>
+    </nav>
+
+  </div>
+</header>
+
+
+
+<!-- ESCOLHA -->
+<section class="escolha">
+  <h2>Deseja fazer parte do time?</h2>
+
+  <div class="cards">
+
+    <div class="card ativo" onclick="trocarTipo('saude', this)">
+      <i class="fa-solid fa-user-doctor"></i>
+      <p>Profissionais da saúde</p>
+    </div>
+
+    <div class="card" onclick="trocarTipo('corporativo', this)">
+      <i class="fa-solid fa-briefcase"></i>
+      <p>Corporativo</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= SAÚDE ================= -->
+<section id="saude" class="form ativo">
+
+<h3>Dados Pessoais</h3>
+
+<input type="text" placeholder="Nome completo">
+<input type="text" placeholder="CPF">
+<input type="tel" placeholder="Telefone">
+<input type="email" placeholder="Email">
+
+<h3>Unidade de Interesse</h3>
+
+<select>
+  <option>Selecione a unidade</option>
+  <option>Fortaleza - Centro</option>
+  <option>Fortaleza - Aldeota</option>
+  <option>Fortaleza - Parangaba</option>
+</select>
+
+<h3>Registro Profissional</h3>
+
+<input type="text" placeholder="Número do Conselho">
+
+<select>
+  <option>UF do Conselho</option>
+  <option>CE</option>
+</select>
+
+<h3>Certificação</h3>
+
+<label><input type="checkbox"> Pós-graduação</label>
+<label><input type="checkbox"> Residência</label>
+<label><input type="checkbox"> Especialização</label>
+<label><input type="checkbox"> Não possui</label>
+
+<h3>Modalidade</h3>
+
+<label><input type="checkbox"> Presencial</label>
+<label><input type="checkbox"> Telemedicina</label>
+
+<h3>Área de atuação</h3>
+
+<label><input type="radio" name="area"> Médico</label>
+<label><input type="radio" name="area"> Odontologia</label>
+<label><input type="radio" name="area"> Outros</label>
+
+<h3>Experiência</h3>
+
+<select>
+  <option>Tempo de experiência</option>
+  <option>Sem experiência</option>
+  <option>1 a 2 anos</option>
+  <option>3 a 5 anos</option>
+  <option>Mais de 5 anos</option>
+</select>
+
+<h3>Currículo</h3>
+<input type="file">
+
+<button>Enviar</button>
+
+</section>
+
+<!-- ================= CORPORATIVO ================= -->
+<section id="corporativo" class="form">
+
+<h3>Dados Pessoais</h3>
+
+<input type="text" placeholder="Nome completo">
+<input type="tel" placeholder="Telefone">
+<input type="email" placeholder="Email">
+
+<h3>Localização</h3>
+
+<select>
+  <option>Estado</option>
+  <option>CE</option>
+</select>
+
+<select>
+  <option>Unidade</option>
+  <option>Fortaleza - Aldeota</option>
+  <option>Fortaleza - Messejana</option>
+  <option>Fortaleza - Parangaba</option>
+</select>
+
+<h3>Área desejada</h3>
+
+<select>
+  <option>Selecione</option>
+  <option>Administrativo</option>
+  <option>Financeiro</option>
+  <option>Atendimento</option>
+</select>
+
+<h3>Experiência</h3>
+
+<select>
+  <option>Tempo de experiência</option>
+  <option>Sem experiência</option>
+  <option>1 a 2 anos</option>
+  <option>3 a 5 anos</option>
+</select>
+
+<h3>Currículo</h3>
+<input type="file">
+
+<button>Enviar</button>
+
+</section>
+
+<script>
+function trocarTipo(tipo, el){
+  document.querySelectorAll('.form').forEach(f => f.classList.remove('ativo'));
+  document.getElementById(tipo).classList.add('ativo');
+
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('ativo'));
+  el.classList.add('ativo');
+}
+</script>
+
+<script>
+// HAMBURGUER
+const hamburger = document.getElementById("hamburger");
+const menu = document.getElementById("menu");
+
+hamburger.addEventListener("click", () => {
+  menu.classList.toggle("active");
+});
+
+
+</script>
+
+
+</body>
+</html>
